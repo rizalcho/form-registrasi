@@ -1,44 +1,273 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
-</head>
-<body>
-    <h2>Register</h2>
-    <form id="registerForm">
-        <input type="email" id="email" placeholder="Email" required><br>
-        <input type="password" id="password" placeholder="Password" required><br>
-        <input type="text" id="username" placeholder="Username" required><br>
-        <button type="submit">Register</button>
-    </form>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registrasi e-TeraJANA</title>
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@7.12.15/dist/sweetalert2.all.min.js"></script>
+    <style>
+        body {
+            background: url('images/IMG_20220701_183445.jpg') no-repeat center center fixed;
+            background-color: #f4f4f4; /* Warna cadangan */
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }        
+        .background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Opacity 50% */
+            z-index: -1;
+        }
+      .form-container {
+        max-width: 500px;
+        margin: auto;
+        margin-top: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        background-color: rgba(255, 255, 255, 0.9);
+        z-index: 1;
+      }
+      .logo {
+    max-width: 400px; /* Ukuran maksimum logo */
+    margin-bottom: 10px; /* Jarak antara logo dan heading */
+    }
+
+      .form-check-input,
+      .form-check-label {
+      display: none;
+      }
+
+    </style>
+  </head>
+  <div class="background-overlay"></div>
+  <body class="bg-light">
+    <div class="container">
+      <img src="images/e-TeraJANA.png" alt="Logo" class="logo d-block mx-auto img-fluid"> <!-- Gambar di atas kontainer -->
+      <div class="form-container">
+        
+        <h4 class="text-center mb-4">Registrasi</h4>
+        <form id="submit-to-google-sheet">
+            <div class="form-group">
+                <select class="form-control" name="status" id="status" onchange="showizinreparatir()" required>
+                <option value="">Mendaftar Sebagai</option>
+                <option value="pemilik">Pemilik UTTP</option>
+                <option value="rekanan">Rekanan (Pihak ke-3)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <input
+                  class="form-control"
+                  type="email"
+                  name="email"
+                  id="email"
+                  placeholder="Email"
+                  required
+                />
+            </div>
+            <div class="form-group">
+                <input class="form-control" type="password" name="password" id="password" placeholder="Password (min. 8 karakter)" required />
+            </div>
+            <div class="form-group">
+                <input
+                 class="form-control"
+                type="text"
+                  name="nama"
+               id="nama"
+               placeholder="Nama Lengkap"
+               required
+            />
+          </div>
+          <div class="form-group">
+            <textarea
+              class="form-control"
+              name="alamat"
+              id="alamat"
+              placeholder="Alamat Lengkap (jalan, Desa/Kel, Kec., Kab.)"
+              required
+            ></textarea>
+        </div>
+        <div class="form-group">
+            <select class="form-control" name="kecamatan" id="kecamatan" required>
+                <option value="">Kecamatan (untuk database)</option>      
+                <option value="Balongbendo">Balongbendo</option>
+                <option value="Buduran">Buduran</option>
+                <option value="Candi">Candi</option>
+                <option value="Gedangan">Gedangan</option>
+                <option value="Jabon">Jabon</option>
+                <option value="Krembung">Krembung</option>
+                <option value="Krian">Krian</option>
+                <option value="Porong">Porong</option>
+                <option value="Prambon">Prambon</option>
+                <option value="Sedati">Sedati</option>
+                <option value="Sidoarjo">Sidoarjo</option>
+                <option value="Sukodono">Sukodono</option>
+                <option value="Taman">Taman</option>
+                <option value="Tanggulangin">Tanggulangin</option>
+                <option value="Tarik">Tarik</option>
+                <option value="Tulangan">Tulangan</option>
+                <option value="Wonoayu">Wonoayu</option>
+                <option value="Waru">Waru</option>
+                <option value="Luar Sidoarjo">Luar Sidoarjo</option>
+            </select>
+        </div>
+          <div class="form-group">
+            <input
+              class="form-control"
+              type="text"
+              name="kontak"
+              id="kontak"
+              pattern="[0-9+]+"
+              inputmode="numeric"
+              placeholder="Kontak (Whatsapp)"
+              required
+            />
+          </div>
+
+          <div class="form-group form-check mt-2">
+            <input class="form-check-input" type="checkbox" id="izin_reparatir" />
+            <label class="form-check-label" for="izin_reparatir"
+              >Punya Izin Reparatir?</label>
+          </div>
+
+          <div class="form-group mt-2">
+                <label for="media" id="documentLabel">Unggah File Dokumen :</label>
+                <input class="form-control-file" type="file" name="media" id="media" accept=".pdf, .jpg, .jpeg, .png" required />
+            </div>
+
+
+
+          <button type="submit" class="btn btn-success btn-block">
+            Submit
+          </button>
+        </form>
+      </div>
+    </div>
 
     <script>
-        document.getElementById("registerForm").addEventListener("submit", function(event) {
-            event.preventDefault();
-            
-            const scriptURL = "https://script.google.com/macros/s/AKfycbysXXLaj3A26tXj32st_GCKpg7Ox7V_2UvXOU9k08SYna7jWJyNDIa60sBNUMe6L15g/exec"; // Ganti dengan URL Apps Script
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            const username = document.getElementById("username").value;
-            
-fetch(scriptURL, {
-    method: "POST",  // Pastikan ini adalah POST
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        email: email,
-        password: password,
-        username: username
-    })
-})
-.then(response => response.json())
-.then(data => alert("Registration Successful!"))
-.catch(error => console.error("Error:", error));
+        const scriptURL = "https://script.google.com/macros/s/AKfycbwrh1A-FRw5-TzTVJQXPdBF5uG4WieEicW275ZGtfcvT9bTVdcY88xydX8smLVo0M46/exec";
+        const form = document.forms["submit-to-google-sheet"];
+        const fileInput = document.getElementById("media");
+    
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+            formData.append("action", "register"); // Tambahkan action untuk register
 
+            const password = document.getElementById("password").value;
+             if (password.length < 8) {
+            swal("Error", "Password harus minimal 8 karakter!", "error");
+            return;
+            }
+
+                // Hash password sebelum dikirim
+            const passwordInput = document.getElementById("password").value;
+            const hashedPassword = await hashPassword(passwordInput);
+            formData.set("password", hashedPassword); // Ganti password dengan versi yang di-hash
+
+            var izin_reparatir = document.getElementById("izin_reparatir").checked;
+    
+            if (izin_reparatir) {
+                formData.append("izin_reparatir", "Yes");
+            } else {
+                formData.append("izin_reparatir", "No");
+            }
+    
+            // Handle file upload (PDF atau gambar)
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
+    
+                // Validasi ukuran file (maksimal 2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    swal("Error", "File size should be less than 2MB.", "error");
+                    return;
+                }
+    
+                // Validasi tipe file yang diizinkan
+                if (!allowedTypes.includes(file.type)) {
+                    swal("Error", "Only JPG, PNG, and PDF files are allowed.", "error");
+                    return;
+                }
+    
+                reader.onload = async function () {
+                    const base64Data = reader.result.split(",")[1]; // Menghapus metadata base64
+                    formData.append("media", base64Data);
+                    formData.append("mediaType", file.type); // Mengirim tipe file
+                    await submitForm(formData);
+                };
+    
+                reader.readAsDataURL(file); // Konversi ke Base64
+            } else {
+                // Jika tidak ada file yang diunggah
+                await submitForm(formData);
+            }
         });
+    
+        async function submitForm(formData) {
+    const submitButton = document.querySelector("button[type='submit']");
+    submitButton.disabled = true;
+    submitButton.innerText = "Loading...";
+
+    try {
+        const response = await fetch(scriptURL, { method: "POST", body: formData });
+        const result = await response.json();
+
+        if (result.result === "success") {
+            swal("Berhasil", "akun anda akan diverifikasi maks. 1x24 jam.", "success");
+            form.reset();
+        } else if (result.message === "Email already exists") {
+            swal("Gagal", "email sudah terdaftar!", "error");
+        } else {
+            swal("Error", "Something went wrong. Please try again!", "error");
+        }
+    } catch (error) {
+        swal("Error", "Failed to submit. Check your internet connection!", "error");
+    } finally {
+        submitButton.disabled = false;
+        submitButton.innerText = "Submit";
+    }
+}
+
+        async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(byte => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function showizinreparatir() {
+            var status = document.getElementById("status").value;
+            var ceklis = document.querySelector(".form-check-input");
+            var ceklis1 = document.querySelector(".form-check-label");
+            var documentLabel = document.getElementById("documentLabel");
+            if (status === "rekanan") {
+              ceklis.style.display = "block";
+              ceklis1.style.display = "block";
+
+                documentLabel.textContent = "Unggah Izin Reparatir, jika belum punya unggah surat pernyataan (PDF atau jpg)";
+            } else {
+                ceklis.style.display = "none";
+                ceklis1.style.display = "none";
+                documentLabel.textContent = "Unggah Surat Pernyataan (PDF atau gambar)";
+            }
+        }
     </script>
-</body>
+    
+  </body>
 </html>
