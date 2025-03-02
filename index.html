@@ -153,6 +153,9 @@
           <button type="submit" class="btn btn-success btn-block">
             Submit
           </button>
+          <div class="text-center mt-3">
+            <p>Sudah punya akun? <a href="login.html" class="font-weight-bold">Login di sini</a></p>
+        </div>        
         </form>
       </div>
     </div>
@@ -228,10 +231,7 @@
         const result = await response.json();
 
         if (result.result === "success") {
-            swal("Berhasil", "akun anda akan diverifikasi maks. 1x24 jam.", "success")
-            .then(() => {
-                window.location.href = "login.html"; // Arahkan ke halaman login
-            });
+            swal("Berhasil", "akun anda akan diverifikasi maks. 1x24 jam.", "success");
             form.reset();
         } else if (result.message === "Email already exists") {
             swal("Gagal", "email sudah terdaftar!", "error");
