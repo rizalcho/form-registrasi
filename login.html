@@ -59,12 +59,15 @@
                     <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
                 </div>
                 <button type="submit" class="btn btn-success btn-block">Login</button>
+                <div class="text-center mt-3">
+                    <p>Belum punya akun? <a href="index.html" class="font-weight-bold">Daftar di sini</a></p>
+                </div> 
             </form>
         </div>
     </div>
 
     <script>
-        const scriptURL = "https://script.google.com/macros/s/AKfycbwrh1A-FRw5-TzTVJQXPdBF5uG4WieEicW275ZGtfcvT9bTVdcY88xydX8smLVo0M46/exec"; // Ganti dengan Google Apps Script ID Anda
+        const scriptURL = "https://script.google.com/macros/s/AKfycbxiscis0iNnnOUxw82XRl2_pqQpI1DruucsK6CeY4KuGBL-3pepI-mVSXXYorcaPWe3/exec"; // Ganti dengan Google Apps Script ID Anda
         const form = document.forms["login-form"];
 
         form.addEventListener("submit", async (e) => {
