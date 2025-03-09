@@ -19,6 +19,7 @@
         }
         .wrapper {
             display: flex;
+            flex-direction: row; /* Membuat layout horisontal (sidebar di kiri, konten utama di kanan) */
         }
         .sidebar {
             width: 250px;
@@ -45,14 +46,24 @@
             justify-content: space-between; /* Jarak antara tombol dan teks */
             padding-bottom: 10px;
         }
-        .sidebar a:hover {
+        .sidebar a:hover,
+        .sidebar b:hover {
             background-color: #34495e;
         }
         .sidebar.minimized h4, 
         .sidebar.minimized a {
             display: none; /* Sembunyikan teks saat di-minimize */
         }
-
+        .sidebar b {
+            display: none; /* Sembunyikan teks saat di-minimize */
+        }
+        .sidebar.minimized b {
+            display: block; /* Sembunyikan teks saat di-minimize */
+            padding-top: 10px;
+            padding-bottom: 10px;
+            border-radius: 5px;
+            text-align: center; */
+        }
         .content.full {
             margin-left: 70px; /* Ketika sidebar di-minimize */
         }
@@ -110,21 +121,6 @@
 #addDataForm ::placeholder {
     font-size: 14px; /* Ubah sesuai kebutuhan */
 }
-
-.navbar {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Efek bayangan */
-    background-color: #98e336; /* Ubah warna navbar */
-}
-
-.navbar-nav .nav-link {
-    font-size: 18px;
-    padding: 10px 15px;
-}
-
-.navbar-nav .btn-danger {
-    margin-left: 15px;
-    border-radius: 5px;
-}
 .custom-btn {
     background-color: #72bf0c !important; /* Warna oranye */
     border-color: #98e336 !important;
@@ -150,9 +146,11 @@
 }
 /* Untuk seluruh tabel */
 .table th, .table td {
-    border-right: 1px solid rgba(0, 0, 0, 0);  /* Menetapkan border vertikal transparan */
+    border-right: 1px solid rgba(0, 0, 0, 0);  Menetapkan border vertikal transparan
 }
-
+.table td:last-child, .table th:last-child {
+    border-right: 1px solid #ddd; /* Ganti #FF0000 dengan warna yang diinginkan */
+}
 .header {
     background-color: #89cd2f; /* Latar belakang terang */
     padding: 15px;
@@ -176,6 +174,14 @@
     align-items: center;
     padding: 8px 16px;
 }
+.user-info {
+    display: flex;
+    align-items: center; /* Menyelaraskan nama pengguna dan tombol logout secara vertikal */
+}
+.tooltip-inner {
+    background-color: #34495e; 
+    color: white;
+}
 
 
     </style>
@@ -191,8 +197,8 @@
             <!-- Bagian kanan header: Nama Pengguna dan Tombol Logout -->
             <div class="user-info">
                 <span id="user-name"></span>
-                <a class="btn btn-link btn-danger text-white" href="#" onclick="logout()">
-                    <i data-lucide="circle-user-round"></i></a>  
+                <button class="btn btn-link btn-danger text-white" onclick="logout()">
+                    <i data-lucide="circle-user-round"></i>  
                 </button>
             </div>
         </div>
@@ -207,24 +213,37 @@
             <div class="sidebar-header">
                 <h4>e-TeraJANA</h4>
                 <button class="toggle-btn" onclick="toggleSidebar()">
-                    <i data-lucide="list-collapse"></i></button>
-            </div>
+                    <i data-lucide="list-collapse"></i></button> </div>
+
             <a href="#" onclick="showPage('dashboard')">
                 <i data-lucide="layout-dashboard"></i> Dashboard</a>
             <a href="#" onclick="toggleSubmenu()">
                 <i data-lucide="folder-open"></i> Data UTTP ▼</a>
                 <div class="submenu" id="submenu">
-                    <a href="#" onclick="showPage('Timbangan')">
+                    <a href="timbangan.html" onclick="showPage('Timbangan')">
                         <i data-lucide="scale"></i>   Timbangan</a>
                     <a href="#" onclick="showPage('pubbm')">
                         <i data-lucide="fuel"></i> PU BBM & Meter Arus</a>
                     <a href="#" onclick="showPage('meter_arus')">
                         <i data-lucide="truck"></i> Tangki Ukur Mobil</a>
                     <a href="#" onclick="showPage('meter_arus')">
-                        <i data-lucide="circle-gauge"></i> Meter Gas</a>   
-                </div>
+                        <i data-lucide="circle-gauge"></i> Meter Gas</a> </div>
+
             <a href="#" onclick="logout()">
-                <i data-lucide="power"></i> Logout</a>   
+                <i data-lucide="power"></i> Logout</a>
+
+                <b href="#" onclick="showPage('dashboard')"data-bs-toggle="tooltip" data-bs-placement="right" title="Dashboard">
+                    <i data-lucide="layout-dashboard"></i></b>
+                <b href="#" onclick="showPage('Timbangan')"data-bs-toggle="tooltip" data-bs-placement="right" title="UTTP Timbangan">
+                    <i data-lucide="scale"></i></b>
+                <b href="#" onclick="showPage('pubbm')"data-bs-toggle="tooltip" data-bs-placement="right" title="UTTP Pompa Ukur BBM dan Meter Arus">
+                    <i data-lucide="fuel"></i></b>
+                <b href="#" onclick="showPage('meter_arus')"data-bs-toggle="tooltip" data-bs-placement="right" title="Logout">
+                    <i data-lucide="truck"></i></b>
+                <b href="#" onclick="showPage('meter_arus')" data-bs-toggle="tooltip" data-bs-placement="right" title="Logout">
+                    <i data-lucide="circle-gauge"></i></b>  
+                <b onclick="logout()" data-bs-toggle="tooltip" data-bs-placement="right" title="Logout">
+                    <i data-lucide="power"></i></b>     
         </div>
     <!-- </div> -->
 
@@ -233,10 +252,10 @@
             <h3 id="page-title">Dashboard</h3>
 
             <div id="dashboard-content">
-                <h4>Selamat Datang, <span id="user-name"></span></h4>
-                <p>Email: <span id="user-email"></span></p>
-                <p>Status: <span id="user-status"></span></p>
-                <p>ID Akun: <span id="user-ID"></span></p>
+                <p class="mt-0 mb-0">Email: <span id="user-email"></span></p>
+                <p class="mt-0 mb-0">Status: <span id="user-status"></span></p>
+                <p class="mt-0 mb-0">ID Akun: <span id="user-ID"></span></p>
+                
 
                 <h4 class="mt-3 mb-3">Pengajuan Tera/Tera Ulang</h4>
                 
@@ -795,6 +814,14 @@ fetch("https://script.google.com/macros/s/AKfycbxg08OEnG-9Q4-ztODe_btle-5Fk97DVI
     }
 }
 lucide.createIcons();
+// Inisialisasi Tooltip
+document.addEventListener('DOMContentLoaded', function () {
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+});
+
     </script>
 
 </body>
