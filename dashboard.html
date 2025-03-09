@@ -135,21 +135,71 @@
     border-color: #98e336 !important;
     color: white !important; /* Warna teks */
 }
+#pagination button {
+    margin: 0 5px;
+}
+
+#pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.table th {
+    cursor: pointer;
+}
+/* Untuk seluruh tabel */
+.table th, .table td {
+    border-right: 1px solid rgba(0, 0, 0, 0);  /* Menetapkan border vertikal transparan */
+}
+
+.header {
+    background-color: #89cd2f; /* Latar belakang terang */
+    padding: 15px;
+    border-bottom: 1px solid #ddd; /* Garis bawah untuk pemisah */
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between; /* Membuat elemen tersebar */
+    align-items: center; /* Menyelaraskan elemen vertikal */
+}
+
+#user-name {
+    font-weight: bold;
+    font-size: 18px;
+    color: #ffffff;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+}
+
 
     </style>
 </head>
 <body>
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg">
+<!-- Header -->
+<header class="header">
     <div class="container-fluid">
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                    <a class="nav-link btn btn-danger text-white" href="#" onclick="logout()">
-                         <i data-lucide="circle-user-round"></i></a>  
-            </ul>
+        <div class="header-content">
+            <!-- Bagian kiri header, bisa kosong atau bisa ditambahkan teks -->
+            <h4></h4>
+            
+            <!-- Bagian kanan header: Nama Pengguna dan Tombol Logout -->
+            <div class="user-info">
+                <span id="user-name"></span>
+                <a class="btn btn-link btn-danger text-white" href="#" onclick="logout()">
+                    <i data-lucide="circle-user-round"></i></a>  
+                </button>
+            </div>
         </div>
     </div>
-</nav>
+</header>
+
+
    
 <div class="wrapper">
          <!-- Sidebar -->
@@ -188,11 +238,19 @@
                 <p>Status: <span id="user-status"></span></p>
                 <p>ID Akun: <span id="user-ID"></span></p>
 
-                <h4 class="mt-3">Pengajuan Tera/Tera Ulang</h4>
+                <h4 class="mt-3 mb-3">Pengajuan Tera/Tera Ulang</h4>
                 
 
                 <!-- Tombol Tambah Data -->
-<button class="btn custom-btn mb-3" data-bs-toggle="modal" data-bs-target="#addDataModal">+ Pengajuan Baru</button>
+                <div class="row mb-1">
+                    <div class="col-md-6 text-start">
+                        <button class="btn custom-btn mb-3" data-bs-toggle="modal" data-bs-target="#addDataModal">+ Pengajuan Baru</button>
+                    </div>
+                    <div class="col text-end ms-auto">
+                        <input type="text" id="searchInput" class="form-control d-inline-block w-auto" placeholder="Cari data..." onkeyup="searchTable()" />
+                    </div>
+                   
+                </div>
 
 <!-- Modal (Popup) Formulir -->
 <div class="modal fade" id="addDataModal" tabindex="-1" aria-labelledby="addDataModalLabel" aria-hidden="true">
@@ -282,12 +340,10 @@
         </div>
     </div>
 </div>
-
-
                 <table class="table table-bordered mt-0">
-                    <thead class="table-secondary">
+                    <thead class="table-white">
                         <tr>
-                            <th class="col-1">Nomor Order</th>
+                            <th class="col-1">Nomor Order <i data-lucide="arrow-down-up"></i></th>
                             <th class="col-2">Nama Pemilik</th>
                             <th class="col-1">Jenis Layanan</th>
                             <!-- <th class="col-2">Jenis UTTP</th> -->
@@ -302,10 +358,17 @@
                         <!-- Data dari Spreadsheet akan dimasukkan di sini -->
                     </tbody>
                 </table>
-            <div class="loading">
-                <div class="spinner-border text-primary" role="status"></div>
-                <p class="text-muted">Memuat data...</p>
-            </div>
+                <div class="loading">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="text-muted">Memuat data...</p>
+                </div>
+                <div id="pagination" class="mt-3">
+                    <button class="btn btn-secondary" id="prev-page" onclick="changePage(-1)">← Sebelumnya</button>
+                    <span id="page-number">Halaman 1 dari 1</span>
+                    <button class="btn btn-secondary" id="next-page" onclick="changePage(1)">Berikutnya →</button>
+                </div>
+                
+            
             <div id="timbangan-content" style="display: none;">
                 <h3>Data Timbangan</h3>
                 <p>Isi data terkait Timbangan di sini...</p>
@@ -325,17 +388,39 @@
 
     
 
-    <script>
-        const scriptURL = "https://script.google.com/macros/s/AKfycbxiscis0iNnnOUxw82XRl2_pqQpI1DruucsK6CeY4KuGBL-3pepI-mVSXXYorcaPWe3/exec"; // Ganti dengan Deployment ID Apps Script Anda
-        let pemilikData = {}; // Objek untuk menyimpan data pemilik
-        document.addEventListener("DOMContentLoaded", () => {
-    console.log("Script is running..."); // ✅ Pastikan script berjalan
-
-        document.getElementById("addDataForm").addEventListener("submit", async (e) => {
-        e.preventDefault();
-
-        const user = JSON.parse(localStorage.getItem("user")); 
-        const userEmail = user.email; // Ambil email dari user yang login
+<script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxg08OEnG-9Q4-ztODe_btle-5Fk97DVI6v4S33RNnToDcsLaZxTMoOHW1fGMLizErX/exec"; // Ganti dengan Deployment ID Apps Script Anda
+    let pemilikData = {}; // Objek untuk menyimpan data pemilik
+    const user = JSON.parse(localStorage.getItem("user"));
+    const userEmail = user.email; // Ambil email dari user yang login
+    // script awal dashboard, ambil data user dan data tabel
+    document.addEventListener("DOMContentLoaded", () => {
+        console.log("Script is running..."); // ✅ Pastikan script berjalan
+        const loadingIndicator = document.querySelector(".loading");
+            if (!user) {
+                window.location.href = "login.html";
+            } else {
+                document.getElementById("user-name").textContent = user.nama;
+                document.getElementById("user-email").textContent = user.email;
+                document.getElementById("user-status").textContent = user.status;
+                document.getElementById("user-ID").textContent = user.akunID;
+                
+                fetch(`${scriptURL}?action=getUserData&email=${encodeURIComponent(userEmail)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        loadingIndicator.style.display = "none";
+                        console.log("Data dari server:", data);
+                        populateTable(data);
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        Swal.fire("Error", "Gagal memuat data!", "error");
+                    });
+            }
+        });
+    // script submit formulir pengajuan tera
+    document.getElementById("addDataForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
         const namaPemilik = document.getElementById("namaPemilik").value.trim();
         const alamat = document.getElementById("alamat").value.trim();
         const kecamatan = document.getElementById("kecamatan").value;
@@ -346,7 +431,6 @@
         const fileInput = document.getElementById("suratpermohonan");
         let fileBase64 = "";
         let fileType = "";
-
     if (!namaPemilik || !alamat || !kecamatan || !jenisPelayanan || !jenisUTTP || !tempattera) {
         Swal.fire("Error", "Semua kolom harus diisi!", "warning");
         return;
@@ -356,11 +440,10 @@
         const file = fileInput.files[0];
         const reader = new FileReader();
         fileType = file.type; // Menyimpan tipe file (MIME type)
-
         reader.readAsDataURL(file);
         await new Promise(resolve => reader.onload = () => {
-            fileBase64 = reader.result.split(",")[1]; // Hapus metadata base64
-            resolve();
+        fileBase64 = reader.result.split(",")[1]; // Hapus metadata base64
+        resolve();
         });
     }
     const submitButton = document.querySelector("#addDataForm button");
@@ -369,7 +452,7 @@
 
     const formData = new URLSearchParams();
     formData.append("action", "addData");
-    formData.append("email", userEmail); // Tambahkan email pengguna
+    formData.append("email", userEmail); // Tambahkan email user
     formData.append("nama_pemilik", namaPemilik);
     formData.append("alamat_pemilik", alamat);
     formData.append("kecamatan", kecamatan);
@@ -400,7 +483,7 @@
     });
         fetch(scriptURL + "?action=getNamaPemilik")
         .then(response => response.json())
-    .then(data => {
+        .then(data => {
         console.log("JSON Response:", data); // ✅ Cek apakah JSON berisi data yang benar
 
         if (data.result === "success") {
@@ -461,21 +544,8 @@ document.getElementById("namaPemilik").addEventListener("change", function () {
         document.getElementById("kecamatan").value = "";
     }
 });
-
-document.getElementById("addDataModal").addEventListener("hidden.bs.modal", function () {
-    document.getElementById("addDataForm").reset(); // Mengosongkan semua input dalam form
-
-    // ✅ Kosongkan datalist agar tidak menyimpan opsi lama
-    const namaPemilikList = document.getElementById("listNamaPemilik");
-    namaPemilikList.innerHTML = ""; 
-
-    // ✅ Pastikan alamat & kecamatan kosong juga
-    document.getElementById("alamat").value = "";
-    document.getElementById("kecamatan").value = "";
-});
-
+// script form pengajuan tera dibuka
 document.getElementById("addDataModal").addEventListener("shown.bs.modal", function () {
-    const user = JSON.parse(localStorage.getItem("user")); // Ambil data user dari localStorage
     const namaPemilikInput = document.getElementById("namaPemilik");
     const alamatInput = document.getElementById("alamat");
     const kecamatanInput = document.getElementById("kecamatan");
@@ -496,16 +566,6 @@ document.getElementById("addDataModal").addEventListener("shown.bs.modal", funct
 
         alamatInput.setAttribute("disabled", true); // Alamat jadi readonly
         kecamatanInput.setAttribute("disabled", true); // Kecamatan jadi readonly
-    } else {
-        // Jika bukan pemilik, kosongkan dan biarkan bisa diisi manual
-        namaPemilikInput.value = "";
-        namaPemilikInput.removeAttribute("disabled");
-
-        alamatInput.value = "";
-        alamatInput.removeAttribute("disabled");
-
-        kecamatanInput.value = "";
-        kecamatanInput.removeAttribute("disabled");
     }
     fetch(scriptURL + "?action=getNamaPemilik")
         .then(response => response.json())
@@ -534,68 +594,146 @@ console.log("Apakah input mengenali datalist?", namaPemilikInput.list === docume
 
 
 
-            const user = JSON.parse(localStorage.getItem("user"));
-            const loadingIndicator = document.querySelector(".loading");
-
-            if (!user) {
-                window.location.href = "login.html";
-            } else {
-                document.getElementById("user-name").textContent = user.nama;
-                document.getElementById("user-email").textContent = user.email;
-                document.getElementById("user-status").textContent = user.status;
-                document.getElementById("user-ID").textContent = user.akunID;
-                
-                fetch(scriptURL + "?action=getUserData")
-                    .then(response => response.json())
-                    .then(data => {
-                        loadingIndicator.style.display = "none";
-                        console.log("Data dari server:", data);
-                        populateTable(data);
-                    })
-                    .catch(error => {
-                        console.error("Error:", error);
-                        Swal.fire("Error", "Gagal memuat data!", "error");
-                    });
-            }
-        });
+           
 
 
-        
-        function populateTable(data) {
-            const tableBody = document.getElementById("user-table-body");
+    //fungsi ambil tabel pengajuan tera sesuai user
+let currentPage = 1;
+let rowsPerPage = 5; // Tentukan jumlah baris per halaman
+let tableData = []; // Tempat untuk menyimpan data tabel
+let filteredData = []; // Menyimpan data yang sudah difilter
+filteredData.isAscending = false; // Status urutan pengurutan (ascending/descending)
+    function populateTable(data) {
+        const tableBody = document.getElementById("user-table-body");
             tableBody.innerHTML = "";
-            const user = JSON.parse(localStorage.getItem("user"));
-    if (!user || !user.email) {
-        console.error("User not found or email is missing.");
-        return;
+            tableData = data; // Menyimpan data tabel
+
+    // Tentukan total halaman
+    const totalPages = Math.ceil(data.length / rowsPerPage);
+    // Menampilkan data sesuai halaman yang dipilih
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = currentPage * rowsPerPage;
+    const currentData = data.slice(startIndex, endIndex);
+            if (currentData.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="8" class="text-center text-muted">Tidak ada data ditemukan</td></tr>`;
+            return;
+            }
+             currentData.forEach((user, index) => {
+        const skhpLink = user.SKHP ? `<a href="${user.SKHP}" target="_blank">Unduh SKHP</a>` : "-";
+        const row = `<tr>
+            <td>${user["Nomor Order"]}</td>
+            <td>${user.nama_pemilik}</td>
+            <td>${user.jenis_pelayanan}</td>
+            <td>${user.tempat_pelaksanaan}</td>
+            <td>${user.Status}</td>
+            <td>${user["Jadwal dan Hari"]}</td>
+            <td>${skhpLink}</td>
+            <td>${user.Berlaku}</td>
+        </tr>`;
+        tableBody.innerHTML += row;
+    });
+    // Update halaman dan kontrol pagination
+    document.getElementById("page-number").textContent = `Halaman ${currentPage} dari ${totalPages}`;
+    document.getElementById("prev-page").disabled = currentPage === 1;
+    document.getElementById("next-page").disabled = currentPage === totalPages;
+}
+function searchTable() {
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = currentPage * rowsPerPage;
+    const input = document.getElementById('searchInput');
+    const filter = input.value.toLowerCase(); // Mengambil nilai pencarian dan ubah menjadi huruf kecil
+    const table = document.getElementById('user-table-body');
+    table.innerHTML = ''; // Bersihkan tabel sebelum menampilkan hasil pencarian
+    
+    // Cari data di seluruh tabel (tableData)
+    filteredData = tableData.filter(row => {
+        return Object.values(row).some(value => 
+            value.toString().toLowerCase().includes(filter)
+        );
+    });
+    const currentData = filteredData.slice(startIndex, endIndex);
+    // Jika tidak ada hasil pencarian
+    if (currentData.length === 0) {
+        table.innerHTML = `<tr><td colspan="8" class="text-center text-muted">Tidak ada data yang cocok</td></tr>`;
+    } else {
+        // Tampilkan hasil pencarian pada tabel
+        currentData.forEach((user) => {
+            const skhpLink = user.SKHP ? `<a href="${user.SKHP}" target="_blank">Unduh SKHP</a>` : "-";
+            const row = `<tr>
+                <td>${user["Nomor Order"]}</td>
+                <td>${user.nama_pemilik}</td>
+                <td>${user.jenis_pelayanan}</td>
+                <td>${user.tempat_pelaksanaan}</td>
+                <td>${user.Status}</td>
+                <td>${user["Jadwal dan Hari"]}</td>
+                <td>${skhpLink}</td>
+                <td>${user.Berlaku}</td>
+            </tr>`;
+            table.innerHTML += row;
+        });
     }
 
-    const userEmail = user.email; // Ambil email user yang sedang login
-    console.log("Filtering data for email:", userEmail);
+    // Update halaman setelah pencarian
+    currentPage = 1; // Setel halaman ke 1 setelah pencarian
+    updatePagination(filteredData); // Perbarui kontrol pagination
+}
+// Fungsi untuk memperbarui kontrol pagination
+function updatePagination(data) {
+    const totalPages = Math.ceil(data.length / rowsPerPage);
+    document.getElementById("page-number").textContent = `Halaman ${currentPage} dari ${totalPages}`;
+    document.getElementById("prev-page").disabled = currentPage === 1;
+    document.getElementById("next-page").disabled = currentPage === totalPages;
+}
+// Fungsi untuk mengganti halaman
+function changePage(direction) {
+    let dataToUse = filteredData.length > 0 ? filteredData : tableData; // Pilih data yang akan digunakan
+    const totalPages = Math.ceil(dataToUse.length / rowsPerPage);
+    currentPage += direction;
 
-    // Filter data berdasarkan email user
-    const filteredData = data.filter(userData => userData.email === userEmail);
+    if (currentPage < 1) currentPage = 1;
+    if (currentPage > totalPages) currentPage = totalPages;
 
-    if (filteredData.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="8" class="text-center text-muted">Tidak ada data ditemukan</td></tr>`;
-        return;
-    }
+    populateTable(dataToUse); // Memuat data sesuai halaman baru
+}
+// Fitur sortir tabel
+function sortTable(columnIndex) {
+    const isAscending = tableData.isAscending || false; // Gunakan status urutan dari data
+    // Setel halaman ke 1 ketika tombol sortir ditekan
+    currentPage = 1;
+    // Urutkan seluruh data berdasarkan kolom yang diklik
+    tableData.sort((rowA, rowB) => {
+        // Ambil nama kolom yang sesuai untuk pengurutan
+        const columns = ["Nomor Order", "nama_pemilik", "jenis_pelayanan", "tempat_pelaksanaan", "Status", "Jadwal dan Hari", "SKHP", "Berlaku"];
+        const cellA = rowA[columns[columnIndex]];  // Akses nilai berdasarkan nama kolom
+        const cellB = rowB[columns[columnIndex]];  // Akses nilai berdasarkan nama kolom
 
-    filteredData.forEach((user, index) => {
-                const skhpLink = user.SKHP ? `<a href="${user.SKHP}" target="_blank">Unduh SKHP</a>` : "-";
-                const row = `<tr>
-                    <td>${user["Nomor Order"]}</td>
-                    <td>${user.nama_pemilik}</td>
-                    <td>${user.jenis_pelayanan}</td>
-                    <td>${user.tempat_pelaksanaan}</td>
-                    <td>${user.Status}</td>
-                    <td>${user["Jadwal dan Hari"]}</td>
-                    <td>${skhpLink}</td>
-                    <td>${user.Berlaku}</td>
-                </tr>`;
-                tableBody.innerHTML += row;
-            });
+        // Jika data berupa string, gunakan localeCompare untuk membandingkan
+        if (isNaN(cellA) && isNaN(cellB)) {
+            return isAscending ? cellA.localeCompare(cellB) : cellB.localeCompare(cellA);
+        } else {
+            // Jika data berupa angka, gunakan perbandingan angka
+            return isAscending ? parseFloat(cellA) - parseFloat(cellB) : parseFloat(cellB) - parseFloat(cellA);
         }
+    });
+
+    // Update status urutan (ascending/descending)
+    tableData.isAscending = !isAscending;
+
+    // Panggil populateTable untuk memperbarui tampilan tabel sesuai halaman
+    populateTable(tableData);
+}
+
+
+
+// Menambahkan event listener pada header tabel untuk sortir
+document.querySelectorAll(".table th").forEach((header, index) => {
+    header.addEventListener("click", () => sortTable(index));
+});
+// Fungsi untuk mencari data di tabel
+// Fungsi untuk mencari data di seluruh tabel (tidak hanya yang ditampilkan pada halaman)
+
+
+
 
         function toggleSubmenu() {
             const submenu = document.getElementById("submenu");
@@ -634,7 +772,7 @@ console.log("Apakah input mengenali datalist?", namaPemilikInput.list === docume
         const loadingIndicator = document.querySelector(".loading");
 loadingIndicator.style.display = "block"; // Tampilkan saat memulai proses
 
-fetch("https://script.google.com/macros/s/AKfycbxiscis0iNnnOUxw82XRl2_pqQpI1DruucsK6CeY4KuGBL-3pepI-mVSXXYorcaPWe3/exec")
+fetch("https://script.google.com/macros/s/AKfycbxg08OEnG-9Q4-ztODe_btle-5Fk97DVI6v4S33RNnToDcsLaZxTMoOHW1fGMLizErX/exec")
     .then(response => response.json())
     .then(data => {
         console.log("Data berhasil diambil:", data);
