@@ -408,7 +408,7 @@
     
 
 <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxg08OEnG-9Q4-ztODe_btle-5Fk97DVI6v4S33RNnToDcsLaZxTMoOHW1fGMLizErX/exec"; // Ganti dengan Deployment ID Apps Script Anda
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxXeYXg-vUN9cwnw6WHZFLiYVQFKvL7I2B3DibyzfXWzGzbCHQ7Lc5uVbm4S9flfHAc/exec"; // Ganti dengan Deployment ID Apps Script Anda
     let pemilikData = {}; // Objek untuk menyimpan data pemilik
     const user = JSON.parse(localStorage.getItem("user"));
     const userEmail = user.email; // Ambil email dari user yang login
@@ -791,7 +791,7 @@ document.querySelectorAll(".table th").forEach((header, index) => {
         const loadingIndicator = document.querySelector(".loading");
 loadingIndicator.style.display = "block"; // Tampilkan saat memulai proses
 
-fetch("https://script.google.com/macros/s/AKfycbxg08OEnG-9Q4-ztODe_btle-5Fk97DVI6v4S33RNnToDcsLaZxTMoOHW1fGMLizErX/exec")
+fetch("https://script.google.com/macros/s/AKfycbxXeYXg-vUN9cwnw6WHZFLiYVQFKvL7I2B3DibyzfXWzGzbCHQ7Lc5uVbm4S9flfHAc/exec")
     .then(response => response.json())
     .then(data => {
         console.log("Data berhasil diambil:", data);
