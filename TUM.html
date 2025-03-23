@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <meta name="viewport" content="width=1024">
-    <title>UTTP Timbangan</title>
+    <title>UTTP TUM</title>
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -144,6 +144,13 @@
         background-color: #34495e; 
         color: white;
         }
+        #user-table-body td p {
+    margin: 2px 0;         /* Memberikan jarak kecil antar paragraf */
+    max-width: 150px;      /* Mengatur lebar maksimum paragraf */
+    word-wrap: break-word; /* Mengatur agar kata panjang terpotong dan tidak keluar dari batas */
+    text-overflow: ellipsis; /* Menambahkan elipsis jika teks terlalu panjang */
+    white-space: normal;   /* Memastikan teks dapat membungkus di dalam elemen */
+    }
     </style>
 </head>
 <body>
@@ -185,7 +192,7 @@
                 <a href="TUM.html">
                     <i data-lucide="truck"></i> Tangki Ukur Mobil</a>
                 <a href="meter.html">
-                    <i data-lucide="circle-gauge"></i> Meter Gas & Meter Air</a>
+                    <i data-lucide="circle-gauge"></i> Meter Gas</a>
             </div>
             <a href="#" onclick="logout()">
                 <i data-lucide="power"></i> Logout</a>
@@ -209,7 +216,7 @@
 
         <!-- Main Content -->
         <div class="content" id="content">
-            <h3 id="page-title">UTTP Timbangan & Perlengkapannya</h3>
+            <h3 id="page-title">UTTP Tangki Ukur Mobil</h3>
 
             <div id="dashboard-content">
                 <p class="mt-0 mb-0">Email: <span id="user-email"></span></p>
@@ -219,14 +226,14 @@
                 <table class="table table-bordered mt-0">
                     <thead class="table-white">
                         <tr>
-                            <th class="col-1">Jenis UTTP</th>
-                            <th class="col-1">Merk</th>
+                            <th class="col-1">Nomor Order</th>
+                            <th class="col-2">Nama Pemilik</th>
                             <th class="col-1">Tipe</th>
                             <th class="col-1">No. Seri</th>
+                            <th class="col-1">Merk Kendaraan</th>
+                            <th class="col-1">No. Rangka</th>
                             <th class="col-1">Kapasitas</th>
-                            <th class="col-1">Daya Baca/e</th>
-                            <th class="col-1">Kelas</th>
-                            <th class="col-1">Tera Terakhir</th>
+                            <th class="col-1">SKHP</th>
                         </tr>
                     </thead>
                     <tbody id="user-table-body">
@@ -247,7 +254,7 @@
 </div>
 
 <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbwAGsxyR49BRIx7xaRDv_xlBTjM5X60DagbrUBvekCR5dGo2E45oQrsv9rUSqM_o-VS/exec"; // Ganti dengan Deployment ID Apps Script Anda
+    const scriptURL = "https://script.google.com/macros/s/AKfycby9oWFG1KOvNNV1NsaMZDC_G00BJ7ovFD4LdgvctDtp5Nh77MWty7hrYERe55EShQgC/exec"; // Ganti dengan Deployment ID Apps Script Anda
     let pemilikData = {};
     const user = JSON.parse(sessionStorage.getItem("user"));
 // cek user login/blm
@@ -263,7 +270,7 @@
                 document.getElementById("user-email").textContent = user.email;
                 document.getElementById("user-status").textContent = user.status;
                 document.getElementById("user-ID").textContent = user.akunID;
-                fetch(`${scriptURL}?action=getTimbData&&akunID=${encodeURIComponent(IDakun)}`)
+                fetch(`${scriptURL}?action=getTUMData&&akunID=${encodeURIComponent(IDakun)}`)
                     .then(response => response.json())
                     .then(data => {
                         loadingIndicator.style.display = "none";
@@ -297,15 +304,16 @@
         return;
         }
         currentData.forEach((user, index) => {
+            const skhpLink = user["SKHP TUM"] && user["SKHP TUM"].includes("sidoarjokab") ? `<a href="${user["SKHP TUM"]}" target="_blank">Unduh SKHP</a>` : "-";
         const row = `<tr>
-            <td>${user["Kategori"]}</td>
-            <td>${user["Merk"]}</td>
+            <td>${user["Nomor Order"]}</td>
+            <td>${user["Pemilik"]}</td>
             <td>${user["Tipe"]}</td>
             <td>${user["No. Seri"]}</td>
-            <td>${user["Kapasitas"]} ${user["Satuan Kap"]}</td>
-            <td>${user["d/e"]} ${user["Satuan Daya Baca"]}</td>
-            <td>${user["Kelas"]}</td>
-            <td>${user["Tgl Input"] ? formatDate(user["Tgl Input"]) : "-"}</td>
+            <td>${user["Merk Kendaraan"]}</td>
+            <td>${user["No. Chasis"]}</td>
+            <td>${user["Kapasitas (liter)"]} Liter</td>
+            <td>${skhpLink}</td>
         </tr>`;
         tableBody.innerHTML += row;
     });

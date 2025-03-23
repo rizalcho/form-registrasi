@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <meta name="viewport" content="width=1024">
+
     <title>Dashboard - e-TeraJANA</title>
 
     <!-- Bootstrap 5 -->
@@ -47,23 +48,30 @@
             justify-content: space-between; /* Jarak antara tombol dan teks */
             padding-bottom: 10px;
         }
-        .sidebar a:hover,
-        .sidebar b:hover {
+        .sidebar a:hover {
             background-color: #34495e;
         }
+        .sidebar.minimized {
+            width: 60px;
+        }
         .sidebar.minimized h4, 
-        .sidebar.minimized a {
+        .sidebar.minimized #sidebar-content {
             display: none; /* Sembunyikan teks saat di-minimize */
         }
-        .sidebar b {
-            display: none; /* Sembunyikan teks saat di-minimize */
+        .sidebar.minimized #sidebar-minimized {
+            display: flex;
+            flex-direction: column;  /* Vertically align items */
+            justify-content: center; /* Center the items vertically */
+            align-items: center;     /* Center the items horizontally */
         }
-        .sidebar.minimized b {
-            display: block; /* Sembunyikan teks saat di-minimize */
-            padding-top: 10px;
-            padding-bottom: 10px;
-            border-radius: 5px;
-            text-align: center; */
+        #sidebar-minimized {
+            display: none;
+        }
+        .content {
+            margin-left: 260px;
+            padding: 20px;
+            width: 100%;
+            transition: margin-left 0.3s ease;
         }
         .content.full {
             margin-left: 70px; /* Ketika sidebar di-minimize */
@@ -76,13 +84,6 @@
             font-size: 14px;
             padding: 5px 10px;
         }
-        .content {
-            margin-left: 260px;
-            padding: 20px;
-            width: 100%;
-            transition: margin-left 0.3s ease;
-            
-        }
         /* Tombol Toggle */
         .toggle-btn {
             background: none;
@@ -93,43 +94,33 @@
             display: block;
             margin-bottom: 10px;
         }
-
-        /* Sidebar Minimized */
-        .sidebar.minimized {
-            width: 60px;
-        }
         .loading {
             display: none;
             text-align: center;
             margin-top: 20px;
         }
-        /* Mengubah ukuran font seluruh tabel */
-.table {
+.table,
+#addDataForm input,
+#addDataForm select,
+#addDataForm textarea,
+#addDataForm ::placeholder {
     font-size: 14px; /* Ubah sesuai kebutuhan */
 }
 .modal-body {
     font-size: 14px; /* Ukuran teks di dalam modal */
 }
-
 .modal-title {
     font-size: 18px; /* Ukuran judul modal */
 }
-#addDataForm input,
-#addDataForm select,
-#addDataForm textarea {
-    font-size: 14px; /* Ubah sesuai kebutuhan */
-}
-#addDataForm ::placeholder {
-    font-size: 14px; /* Ubah sesuai kebutuhan */
-}
 .custom-btn {
-    background-color: #72bf0c !important; /* Warna oranye */
-    border-color: #98e336 !important;
+    background-color: #0db20f !important; /* Warna oranye */
+    border-color: #0db20f !important;
     color: white !important; /* Warna teks */
+    
 }
 .custom-btn:hover {
-    background-color: #659a1f !important; /* Warna oranye */
-    border-color: #98e336 !important;
+    background-color: #0b7e0d !important; /* Warna oranye */
+    border-color: #0b7e0d !important;
     color: white !important; /* Warna teks */
 }
 #pagination button {
@@ -147,7 +138,7 @@
 }
 /* Untuk seluruh tabel */
 .table th, .table td {
-    border-right: 1px solid rgba(0, 0, 0, 0);  Menetapkan border vertikal transparan
+    border-right: 1px solid rgba(0, 0, 0, 0); 
 }
 .table td:last-child, .table th:last-child {
     border-right: 1px solid #ddd; /* Ganti #FF0000 dengan warna yang diinginkan */
@@ -171,9 +162,14 @@
 }
 
 .btn {
-    display: inline-flex;
+    /* display: inline-flex; */
     align-items: center;
     padding: 8px 16px;
+}
+.btn-link {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 8px;
 }
 .user-info {
     display: flex;
@@ -210,62 +206,61 @@
    
 <div class="wrapper">
          <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <h4>e-TeraJANA</h4>
-                <button class="toggle-btn" onclick="toggleSidebar()">
-                    <i data-lucide="list-collapse"></i></button> </div>
-
-            <a href="#" onclick="showPage('dashboard')">
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h4>e-TeraJANA</h4>
+            <button class="toggle-btn" onclick="toggleSidebar()">
+            <i data-lucide="list-collapse"></i></button>
+        </div>
+        <!-- Sidebar content -->
+        <div id="sidebar-content">
+            <a href="dashboard.html">
                 <i data-lucide="layout-dashboard"></i> Dashboard</a>
             <a href="#" onclick="toggleSubmenu()">
                 <i data-lucide="folder-open"></i> Data UTTP ▼</a>
-                <div class="submenu" id="submenu">
-                    <a href="timbangan.html" onclick="showPage('Timbangan')">
-                        <i data-lucide="scale"></i>   Timbangan</a>
-                    <a href="#" onclick="showPage('pubbm')">
-                        <i data-lucide="fuel"></i> PU BBM & Meter Arus</a>
-                    <a href="#" onclick="showPage('meter_arus')">
-                        <i data-lucide="truck"></i> Tangki Ukur Mobil</a>
-                    <a href="#" onclick="showPage('meter_arus')">
-                        <i data-lucide="circle-gauge"></i> Meter Gas</a> </div>
-
+            <div class="submenu" id="submenu">
+                <a href="timbangan.html">
+                    <i data-lucide="scale"></i>   Timbangan</a>
+                <a href="pubbm.html">
+                    <i data-lucide="fuel"></i> PU BBM & Meter Arus</a>
+                <a href="TUM.html">
+                    <i data-lucide="truck"></i> Tangki Ukur Mobil</a>
+                <a href="meter.html">
+                    <i data-lucide="circle-gauge"></i> Meter Gas</a>
+            </div>
             <a href="#" onclick="logout()">
                 <i data-lucide="power"></i> Logout</a>
-
-                <b href="#" onclick="showPage('dashboard')"data-bs-toggle="tooltip" data-bs-placement="right" title="Dashboard">
-                    <i data-lucide="layout-dashboard"></i></b>
-                <b href="#" onclick="showPage('Timbangan')"data-bs-toggle="tooltip" data-bs-placement="right" title="UTTP Timbangan">
-                    <i data-lucide="scale"></i></b>
-                <b href="#" onclick="showPage('pubbm')"data-bs-toggle="tooltip" data-bs-placement="right" title="UTTP Pompa Ukur BBM dan Meter Arus">
-                    <i data-lucide="fuel"></i></b>
-                <b href="#" onclick="showPage('meter_arus')"data-bs-toggle="tooltip" data-bs-placement="right" title="Logout">
-                    <i data-lucide="truck"></i></b>
-                <b href="#" onclick="showPage('meter_arus')" data-bs-toggle="tooltip" data-bs-placement="right" title="Logout">
-                    <i data-lucide="circle-gauge"></i></b>  
-                <b onclick="logout()" data-bs-toggle="tooltip" data-bs-placement="right" title="Logout">
-                    <i data-lucide="power"></i></b>     
         </div>
-    <!-- </div> -->
-
+        <!-- Minimized sidebar content -->
+        <div id="sidebar-minimized">
+            <a href="dashboard.html" data-bs-toggle="tooltip" data-bs-placement="right" title="Dashboard">
+                <i data-lucide="layout-dashboard"></i></a>
+                <a href="timbangan.html" data-bs-toggle="tooltip" data-bs-placement="right" title="UTTP Timbangan">
+                    <i data-lucide="scale"></i></a>
+                <a href="PUBBM.html" data-bs-toggle="tooltip" data-bs-placement="right" title="UTTP Pompa Ukur BBM dan Meter Arus">
+                    <i data-lucide="fuel"></i></a>
+                <a href="TUM.html" data-bs-toggle="tooltip" data-bs-placement="right" title="Tangki Ukur Mobil">
+                    <i data-lucide="truck"></i></a>
+                <a href="Meter.html" data-bs-toggle="tooltip" data-bs-placement="right" title="Meter Gas Diafragma & Meter Air">
+                    <i data-lucide="circle-gauge"></i></a>  
+                <a onclick="logout()" data-bs-toggle="tooltip" data-bs-placement="right" title="Logout">
+                    <i data-lucide="power"></i></a>     
+        </div>
+    </div>
         <!-- Main Content -->
         <div class="content" id="content">
             <h3 id="page-title">Dashboard</h3>
-
             <div id="dashboard-content">
                 <p class="mt-0 mb-0">Email: <span id="user-email"></span></p>
                 <p class="mt-0 mb-0">Status: <span id="user-status"></span></p>
                 <p class="mt-0 mb-0">ID Akun: <span id="user-ID"></span></p>
-                
-
                 <h4 class="mt-3 mb-3">Pengajuan Tera/Tera Ulang</h4>
-                
-
                 <!-- Tombol Tambah Data -->
                 <div class="row mb-1">
                     <div class="col-md-6 text-start">
                         <button class="btn custom-btn mb-3" data-bs-toggle="modal" data-bs-target="#addDataModal">+ Pengajuan Baru</button>
                     </div>
+                    <!-- search data -->
                     <div class="col text-end ms-auto">
                         <input type="text" id="searchInput" class="form-control d-inline-block w-auto" placeholder="Cari data..." onkeyup="searchTable()" />
                     </div>
@@ -273,8 +268,8 @@
                 </div>
 
 <!-- Modal (Popup) Formulir -->
-<div class="modal fade" id="addDataModal" tabindex="-1" aria-labelledby="addDataModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal fade" id="addDataModal" tabindex="-1" aria-labelledby="addDataModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="addDataModalLabel">Pengajuan Baru</h5>
@@ -282,17 +277,20 @@
             </div>
             <div class="modal-body">
                 <form id="addDataForm">
-                    <div class="mb-3">
-                        <input list="listNamaPemilik" class="form-control" id="namaPemilik" placeholder="Pilih atau ketik nama baru..." required autocomplete="off">
-                        <datalist id="listNamaPemilik">
-                            <!-- Jangan gunakan <option disabled selected> karena bisa menyebabkan dropdown tidak muncul -->
-                        </datalist>
+                    <div class="row">
+                        <div class="col-md-9 mb-3">
+                            <input list="listNamaPemilik" class="form-control" id="namaPemilik" 
+                                placeholder="Pilih atau ketik nama baru..." required autocomplete="off">
+                            <datalist id="listNamaPemilik"></datalist>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <input class="form-control" type="text" name="ID" id="ID" placeholder="ID Pemilik">
+                        </div>
                     </div>
                    <!-- Alamat -->
                    <div class="mb-3">
-                    <textarea class="form-control" id="alamat" rows="2" placeholder="Masukkan alamat lengkap (Jalan, No., Desa/Kel., Kec., Kab./Kota)" required></textarea>
+                    <textarea class="form-control" id="alamat" rows="2" placeholder="Masukkan alamat lengkap (Jl., No., Desa/Kel., Kec., Kab./Kota)" required></textarea>
                 </div>
-
                 <!-- Kecamatan -->
                 <div class="mb-3">
                     <select class="form-control" id="kecamatan" required>
@@ -329,20 +327,20 @@
                         <select class="form-control" id="jenisUTTP" required>
                             <option value="">Pilih Jenis UTTP</option>
                             <option value="Timbangan">Timbangan & Perlengkapannya</option>
-                            <option value="pubbm">Pompa UKur BBM</option>
-                            <option value="tum">Tangki Ukur Mobil</option>
-                            <option value="meterarus">Meter Arus Kerja</option>
-                            <option value="meterair">Meter Air</option>
-                            <option value="takarah">Takaran</option>
-                            <option value="pengecek">Timbangan Pengecek & Penyortir</option>
+                            <option value="Pompa Ukur BBM">Pompa Ukur BBM</option>
+                            <option value="TUM">Tangki Ukur Mobil</option>
+                            <option value="Meter Arus Kerja">Meter Arus Kerja</option>
+                            <option value="Meter Air">Meter Air</option>
+                            <option value="Meter Gas Diafragma">Meter Gas Diafragma</option>
+                            <option value="Takaran">Takaran</option>
                         </select>
                     </div>
                     <div class="mb-3">
                         <select class="form-control" id="tempattera" required>
                             <option value="">Pilih Tempat Pelaksanaan</option>
-                            <option value="kantor">Kantor Metrologi</option>
-                            <option value="tempatpakai">Tempat Pakai/Perusahaan (Loko)</option>
-                            <option value="sidangpasar">Sidang Pasar</option>
+                            <option value="Kantor Metrologi">Kantor Metrologi</option>
+                            <option value="Tempat Pakai">Tempat Pakai/Perusahaan (Loko)</option>
+                            <option value="Sidang Pasar">Sidang Pasar</option>
                         </select>
                     </div>
                     <div class="mb-3">
@@ -352,8 +350,6 @@
                         <label for="suratpermohonan" class="form-label">Unggah Surat Permohonan Sebagai Dasar Penerbitan SKHP </label>
                         <input type="file" class="form-control" id="suratpermohonan" accept=".pdf, .jpg, .jpeg, .png">
                     </div>
-                    
-                    
                     <button type="submit" class="btn custom-btn w-100">Simpan</button>
                 </form>
             </div>
@@ -363,13 +359,12 @@
                 <table class="table table-bordered mt-0">
                     <thead class="table-white">
                         <tr>
-                            <th class="col-1">Nomor Order <i data-lucide="arrow-down-up"></i></th>
-                            <th class="col-2">Nama Pemilik</th>
+                            <th class="col-1">Nomor Order ↑↓</th>
+                            <th class="col-2">Nama Pemilik ↑↓</th>
                             <th class="col-1">Jenis Layanan</th>
-                            <!-- <th class="col-2">Jenis UTTP</th> -->
                             <th class="col-1">Pelaksanaan</th>
                             <th class="col-1">Status</th>
-                            <th class="col-2">Jadawal Pelaksanaan</th>
+                            <th class="col-2">Jadwal Pelaksanaan</th>
                             <th class="col-1">SKHP</th>
                             <th class="col-1">Berlaku Sampai</th>
                         </tr>
@@ -387,45 +382,28 @@
                     <span id="page-number">Halaman 1 dari 1</span>
                     <button class="btn btn-secondary" id="next-page" onclick="changePage(1)">Berikutnya →</button>
                 </div>
-                
-            
-            <div id="timbangan-content" style="display: none;">
-                <h3>Data Timbangan</h3>
-                <p>Isi data terkait Timbangan di sini...</p>
-            </div>
-
-            <div id="pubbm-content" style="display: none;">
-                <h3>Data PUBBM</h3>
-                <p>Isi data terkait PUBBM di sini...</p>
-            </div>
-
-            <div id="meter_arus-content" style="display: none;">
-                <h3>Data Meter Arus, TUM</h3>
-                <p>Isi data terkait Meter Arus, TUM di sini...</p>
-            </div>
         </div>
     </div>
-
-    
-
+</div>
 <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxXeYXg-vUN9cwnw6WHZFLiYVQFKvL7I2B3DibyzfXWzGzbCHQ7Lc5uVbm4S9flfHAc/exec"; // Ganti dengan Deployment ID Apps Script Anda
+    const scriptURL = "https://script.google.com/macros/s/AKfycby9oWFG1KOvNNV1NsaMZDC_G00BJ7ovFD4LdgvctDtp5Nh77MWty7hrYERe55EShQgC/exec"; // Ganti dengan Deployment ID Apps Script Anda
     let pemilikData = {}; // Objek untuk menyimpan data pemilik
-    const user = JSON.parse(localStorage.getItem("user"));
-    const userEmail = user.email; // Ambil email dari user yang login
-    // script awal dashboard, ambil data user dan data tabel
-    document.addEventListener("DOMContentLoaded", () => {
-        console.log("Script is running..."); // ✅ Pastikan script berjalan
-        const loadingIndicator = document.querySelector(".loading");
-            if (!user) {
-                window.location.href = "login.html";
-            } else {
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    // cek user login/blm
+    if (!user) {
+    window.location.href = "login.html";
+    } else {
+        const IDakun = user.akunID;
+        const userEmail = user.email;
+        document.addEventListener("DOMContentLoaded", () => {
+            console.log("Script is running..."); // ✅ Pastikan script berjalan
+            const loadingIndicator = document.querySelector(".loading");
+            loadingIndicator.style.display = "block"; // Tampilkan loading
                 document.getElementById("user-name").textContent = user.nama;
                 document.getElementById("user-email").textContent = user.email;
                 document.getElementById("user-status").textContent = user.status;
                 document.getElementById("user-ID").textContent = user.akunID;
-                
-                fetch(`${scriptURL}?action=getUserData&email=${encodeURIComponent(userEmail)}`)
+                fetch(`${scriptURL}?action=getUserData&&akunID=${encodeURIComponent(IDakun)}`)
                     .then(response => response.json())
                     .then(data => {
                         loadingIndicator.style.display = "none";
@@ -436,12 +414,17 @@
                         console.error("Error:", error);
                         Swal.fire("Error", "Gagal memuat data!", "error");
                     });
-            }
         });
-    // script submit formulir pengajuan tera
+    }
+// script submit formulir pengajuan tera
     document.getElementById("addDataForm").addEventListener("submit", async (e) => {
     e.preventDefault();
         const namaPemilik = document.getElementById("namaPemilik").value.trim();
+        const IDpemilik = document.getElementById("ID").value;
+        const userEmail = user.email;
+        const IDakun = user.akunID;
+        const userStatus =user.status;
+        const userNama = user.nama;
         const alamat = document.getElementById("alamat").value.trim();
         const kecamatan = document.getElementById("kecamatan").value;
         const jenisPelayanan = document.getElementById("jenisPelayanan").value;
@@ -451,7 +434,7 @@
         const fileInput = document.getElementById("suratpermohonan");
         let fileBase64 = "";
         let fileType = "";
-    if (!namaPemilik || !alamat || !kecamatan || !jenisPelayanan || !jenisUTTP || !tempattera) {
+    if (!namaPemilik || !alamat || !kecamatan || !jenisPelayanan || !jenisUTTP || !tempattera || !keterangan) {
         Swal.fire("Error", "Semua kolom harus diisi!", "warning");
         return;
     }
@@ -459,6 +442,17 @@
     if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
         const reader = new FileReader();
+        const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
+        // Validasi ukuran file (maksimal 2MB)
+        if (file.size > 2 * 1024 * 1024) {
+                    Swal.fire("Error", "File size should be less than 2MB.", "error");
+                    return;
+                }
+        // Validasi tipe file yang diizinkan
+        if (!allowedTypes.includes(file.type)) {
+            Swal.fire("Error", "Only JPG, PNG, and PDF files are allowed.", "error");
+                    return;
+                }
         fileType = file.type; // Menyimpan tipe file (MIME type)
         reader.readAsDataURL(file);
         await new Promise(resolve => reader.onload = () => {
@@ -473,7 +467,11 @@
     const formData = new URLSearchParams();
     formData.append("action", "addData");
     formData.append("email", userEmail); // Tambahkan email user
+    formData.append("ID Akun", IDakun);
+    formData.append("ID Pemilik", IDpemilik);
+    formData.append("Status", "Menunggu Jadwal");
     formData.append("nama_pemilik", namaPemilik);
+    if (userStatus == "Rekanan") {formData.append("Rekanan", userNama);}
     formData.append("alamat_pemilik", alamat);
     formData.append("kecamatan", kecamatan);
     formData.append("jenis_pelayanan", jenisPelayanan);
@@ -500,41 +498,38 @@
             submitButton.disabled = false;
             submitButton.innerText = "Simpan";
         }
-    });
-        fetch(scriptURL + "?action=getNamaPemilik")
-        .then(response => response.json())
-        .then(data => {
-        console.log("JSON Response:", data); // ✅ Cek apakah JSON berisi data yang benar
-
-        if (data.result === "success") {
-            const namaPemilikList = document.getElementById("listNamaPemilik");
-            namaPemilikList.innerHTML = ""; // Bersihkan opsi sebelumnya
-
-            data.data.forEach(item => {
-                    let option = document.createElement("option");
-                    option.value = item.nama;
-                    namaPemilikList.appendChild(option);
-
-                    // Simpan data ke objek pemilikData
-                    pemilikData[item.nama] = {
-                        alamat: item.alamat,
-                        kecamatan: item.kecamatan
-                    };
+});
+// ambil data pemilik saat dashboard dibuka
+    fetch(scriptURL + "?action=getNamaPemilik")
+    .then(response => response.json())
+    .then(data => {
+    console.log("JSON Response:", data);
+    if (data.result === "success") {
+        const namaPemilikList = document.getElementById("listNamaPemilik");
+        namaPemilikList.innerHTML = ""; // Bersihkan opsi sebelumnya
+        data.data.forEach(item => {
+            let option = document.createElement("option");
+            option.value = item.nama;
+            namaPemilikList.appendChild(option);
+            // Simpan data ke objek pemilikData
+                pemilikData[item.nama] = {
+                    alamat: item.alamat,
+                    kecamatan: item.kecamatan,
+                    ID: item.ID,
+                    pemilikkecamatan: item.pemilikkecamatan
+                };
                 });
-
                 console.log("Pemilik Data Loaded:", pemilikData);
-            }
-        })
-        .catch(error => console.error("Fetch Error:", error));
-
-        document.getElementById("namaPemilik").addEventListener("input", function () {
+    }
+    })
+    .catch(error => console.error("Fetch Error:", error));
+// fungsi searching nama pemilik
+    document.getElementById("namaPemilik").addEventListener("input", function () {
     let input = this;
     let datalist = document.getElementById("listNamaPemilik");
     let searchValue = input.value.toLowerCase();
-
     // Bersihkan datalist sebelum menambah opsi baru
     datalist.innerHTML = "";
-
     Object.keys(pemilikData).forEach(nama => {
         if (nama.toLowerCase().includes(searchValue)) { // Filter nama yang cocok
             let option = document.createElement("option");
@@ -542,26 +537,28 @@
             datalist.appendChild(option);
         }
     });
-
     console.log("Datalist updated with:", datalist.childNodes);
 });
 
 // ✅ Paksa dropdown muncul kembali dengan tombol ArrowDown
-document.getElementById("namaPemilik").addEventListener("keydown", function (event) {
-    if (event.key === "ArrowDown") {
-        this.setAttribute("list", "listNamaPemilik"); // Paksa browser membaca ulang datalist
-    }
-});
+    // document.getElementById("namaPemilik").addEventListener("keydown", function (event) {
+    // if (event.key === "ArrowDown") {
+        // this.setAttribute("list", "listNamaPemilik"); // Paksa browser membaca ulang datalist
+    // }
+// });
 
 // ✅ Isi otomatis Alamat & Kecamatan saat memilih nama dari datalist
+document.getElementById("ID").setAttribute("disabled", true);
 document.getElementById("namaPemilik").addEventListener("change", function () {
     let nama = this.value;
     if (pemilikData[nama]) { 
         document.getElementById("alamat").value = pemilikData[nama].alamat;
         document.getElementById("kecamatan").value = pemilikData[nama].kecamatan;
+        document.getElementById("ID").value = pemilikData[nama].ID;
     } else {
         document.getElementById("alamat").value = "";
         document.getElementById("kecamatan").value = "";
+        document.getElementById("ID").value = "";
     }
 });
 // script form pengajuan tera dibuka
@@ -569,12 +566,10 @@ document.getElementById("addDataModal").addEventListener("shown.bs.modal", funct
     const namaPemilikInput = document.getElementById("namaPemilik");
     const alamatInput = document.getElementById("alamat");
     const kecamatanInput = document.getElementById("kecamatan");
-
-    if (user && user.status === "pemilik") {
+    if (user && user.status === "Pemilik") {
         // ✅ Isi otomatis Nama Pemilik, Alamat, dan Kecamatan
         namaPemilikInput.value = user.nama;
         namaPemilikInput.setAttribute("disabled", true); // Nama Pemilik jadi readonly
-
         // ✅ Pastikan ada data alamat & kecamatan yang cocok
         if (pemilikData[user.nama]) {
             alamatInput.value = pemilikData[user.nama].alamat;
@@ -583,51 +578,22 @@ document.getElementById("addDataModal").addEventListener("shown.bs.modal", funct
             alamatInput.value = "";
             kecamatanInput.value = "";
         }
-
         alamatInput.setAttribute("disabled", true); // Alamat jadi readonly
         kecamatanInput.setAttribute("disabled", true); // Kecamatan jadi readonly
     }
-    fetch(scriptURL + "?action=getNamaPemilik")
-        .then(response => response.json())
-        .then(data => {
-            if (data.result === "success") {
-                const namaPemilikList = document.getElementById("listNamaPemilik");
-                namaPemilikList.innerHTML = ""; // Bersihkan sebelum menambahkan opsi baru
-
-                data.data.forEach(item => {
-                    let option = document.createElement("option");
-                    option.value = item.nama;
-                    namaPemilikList.appendChild(option);
-                });
-
-                console.log("Datalist reloaded:", namaPemilikList);
-            }
-        })
-        .catch(error => console.error("Error fetching nama pemilik:", error));
 });
-
-
-
-
 const namaPemilikInput = document.getElementById("namaPemilik");
 console.log("Apakah input mengenali datalist?", namaPemilikInput.list === document.getElementById("listNamaPemilik"));
-
-
-
-           
-
-
-    //fungsi ambil tabel pengajuan tera sesuai user
-let currentPage = 1;
-let rowsPerPage = 5; // Tentukan jumlah baris per halaman
-let tableData = []; // Tempat untuk menyimpan data tabel
-let filteredData = []; // Menyimpan data yang sudah difilter
-filteredData.isAscending = false; // Status urutan pengurutan (ascending/descending)
+//fungsi ambil tabel pengajuan tera sesuai user
+    let currentPage = 1;
+    let rowsPerPage = 10; // Tentukan jumlah baris per halaman
+    let tableData = []; // Tempat untuk menyimpan data tabel
+    let filteredData = []; // Menyimpan data yang sudah difilter
+        filteredData.isAscending = false; // Status urutan pengurutan (ascending/descending)
     function populateTable(data) {
         const tableBody = document.getElementById("user-table-body");
             tableBody.innerHTML = "";
             tableData = data; // Menyimpan data tabel
-
     // Tentukan total halaman
     const totalPages = Math.ceil(data.length / rowsPerPage);
     // Menampilkan data sesuai halaman yang dipilih
@@ -638,17 +604,17 @@ filteredData.isAscending = false; // Status urutan pengurutan (ascending/descend
                 tableBody.innerHTML = `<tr><td colspan="8" class="text-center text-muted">Tidak ada data ditemukan</td></tr>`;
             return;
             }
-             currentData.forEach((user, index) => {
-        const skhpLink = user.SKHP ? `<a href="${user.SKHP}" target="_blank">Unduh SKHP</a>` : "-";
+        currentData.forEach((user, index) => {
+        const skhpLink = user.SKHP && user.SKHP.includes("sidoarjokab") ? `<a href="${user.SKHP}" target="_blank">Unduh SKHP</a>` : "-";
         const row = `<tr>
             <td>${user["Nomor Order"]}</td>
             <td>${user.nama_pemilik}</td>
             <td>${user.jenis_pelayanan}</td>
             <td>${user.tempat_pelaksanaan}</td>
             <td>${user.Status}</td>
-            <td>${user["Jadwal dan Hari"]}</td>
+            <td>${user["Jadwal dan Hari"] ? user["Jadwal dan Hari"] : "-"}</td>
             <td>${skhpLink}</td>
-            <td>${user.Berlaku}</td>
+            <td>${user.Berlaku ? formatDate(user.Berlaku) : "-"}</td>
         </tr>`;
         tableBody.innerHTML += row;
     });
@@ -664,7 +630,6 @@ function searchTable() {
     const filter = input.value.toLowerCase(); // Mengambil nilai pencarian dan ubah menjadi huruf kecil
     const table = document.getElementById('user-table-body');
     table.innerHTML = ''; // Bersihkan tabel sebelum menampilkan hasil pencarian
-    
     // Cari data di seluruh tabel (tableData)
     filteredData = tableData.filter(row => {
         return Object.values(row).some(value => 
@@ -678,7 +643,7 @@ function searchTable() {
     } else {
         // Tampilkan hasil pencarian pada tabel
         currentData.forEach((user) => {
-            const skhpLink = user.SKHP ? `<a href="${user.SKHP}" target="_blank">Unduh SKHP</a>` : "-";
+            const skhpLink = user.SKHP && user.SKHP.includes("sidoarjokab") ? `<a href="${user.SKHP}" target="_blank">Unduh SKHP</a>` : "-";
             const row = `<tr>
                 <td>${user["Nomor Order"]}</td>
                 <td>${user.nama_pemilik}</td>
@@ -692,7 +657,6 @@ function searchTable() {
             table.innerHTML += row;
         });
     }
-
     // Update halaman setelah pencarian
     currentPage = 1; // Setel halaman ke 1 setelah pencarian
     updatePagination(filteredData); // Perbarui kontrol pagination
@@ -712,7 +676,6 @@ function changePage(direction) {
 
     if (currentPage < 1) currentPage = 1;
     if (currentPage > totalPages) currentPage = totalPages;
-
     populateTable(dataToUse); // Memuat data sesuai halaman baru
 }
 // Fitur sortir tabel
@@ -735,43 +698,19 @@ function sortTable(columnIndex) {
             return isAscending ? parseFloat(cellA) - parseFloat(cellB) : parseFloat(cellB) - parseFloat(cellA);
         }
     });
-
     // Update status urutan (ascending/descending)
     tableData.isAscending = !isAscending;
-
     // Panggil populateTable untuk memperbarui tampilan tabel sesuai halaman
     populateTable(tableData);
 }
-
-
-
 // Menambahkan event listener pada header tabel untuk sortir
 document.querySelectorAll(".table th").forEach((header, index) => {
     header.addEventListener("click", () => sortTable(index));
 });
-// Fungsi untuk mencari data di tabel
-// Fungsi untuk mencari data di seluruh tabel (tidak hanya yang ditampilkan pada halaman)
-
-
-
-
         function toggleSubmenu() {
             const submenu = document.getElementById("submenu");
             submenu.style.display = submenu.style.display === "block" ? "none" : "block";
         }
-
-        function showPage(page) {
-            document.getElementById("page-title").textContent = page === "dashboard" ? "Dashboard" :
-                                                                 page === "timbangan" ? "Data Timbangan" :
-                                                                 page === "pubbm" ? "Data PUBBM" :
-                                                                 "Data Meter Arus, TUM";
-
-            document.getElementById("dashboard-content").style.display = page === "dashboard" ? "block" : "none";
-            document.getElementById("timbangan-content").style.display = page === "timbangan" ? "block" : "none";
-            document.getElementById("pubbm-content").style.display = page === "pubbm" ? "block" : "none";
-            document.getElementById("meter_arus-content").style.display = page === "meter_arus" ? "block" : "none";
-        }
-
         function logout() {
             Swal.fire({
                 title: "Konfirmasi Logout",
@@ -783,25 +722,11 @@ document.querySelectorAll(".table th").forEach((header, index) => {
                 confirmButtonText: "Ya, Logout"
             }).then((result) => {
                 if (result.isConfirmed) {
-                    localStorage.removeItem("user");
+                    sessionStorage.removeItem("user");
                     window.location.href = "login.html";
                 }
             });
         }
-
-        const loadingIndicator = document.querySelector(".loading");
-loadingIndicator.style.display = "block"; // Tampilkan saat memulai proses
-
-fetch("https://script.google.com/macros/s/AKfycbxXeYXg-vUN9cwnw6WHZFLiYVQFKvL7I2B3DibyzfXWzGzbCHQ7Lc5uVbm4S9flfHAc/exec")
-    .then(response => response.json())
-    .then(data => {
-        console.log("Data berhasil diambil:", data);
-        loadingIndicator.style.display = "none"; // Sembunyikan setelah selesai memuat data
-    })
-    .catch(error => {
-        console.error("Terjadi kesalahan:", error);
-        loadingIndicator.style.display = "none"; // Sembunyikan meskipun terjadi error
-    });
     function toggleSidebar() {
     const sidebar = document.getElementById("sidebar");
     const content = document.getElementById("content");
@@ -822,8 +747,17 @@ document.addEventListener('DOMContentLoaded', function () {
         return new bootstrap.Tooltip(tooltipTriggerEl);
     });
 });
+// Fungsi Formatdate indo
+function formatDate(dateString) {
+        let date = new Date(dateString); 
+        let formattedDate = date.toLocaleDateString("id-ID", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+        });
+    return formattedDate;
+    }
 
     </script>
-
 </body>
 </html>

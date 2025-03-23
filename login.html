@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login e-TeraJANA</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
         body {
@@ -34,6 +37,14 @@
             max-width: 400px;
             margin: auto;
             padding: 20px;
+            background: rgba(239, 239, 239, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .modal-content {
+            max-width: 350px;
+            margin: auto;
             background: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -43,6 +54,16 @@
             max-width: 400px;
             margin-bottom: 10px;
         }
+        .custom-btn {
+    background-color: #0db20f !important; /* Warna oranye */
+    border-color: #0db20f !important;
+    color: white !important; /* Warna teks */
+}
+.custom-btn:hover {
+    background-color: #0b7e0d !important; /* Warna oranye */
+    border-color: #0b7e0d !important;
+    color: white !important; /* Warna teks */
+}
     </style>
 </head>
 <body>
@@ -52,22 +73,42 @@
         <div class="form-container">
             <h4 class="text-center mb-4">Login</h4>
             <form id="login-form">
-                <div class="form-group">
+                <div class="mb-3">
                     <input type="email" class="form-control" name="email" id="email" placeholder="Email" required>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
                 </div>
-                <button type="submit" class="btn btn-success btn-block">Login</button>
+                <button type="submit" class="btn custom-btn w-100">Login</button>
                 <div class="text-center mt-3">
                     <p>Belum punya akun? <a href="index.html" class="font-weight-bold">Daftar di sini</a></p>
+                    <p><a href="#" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Lupa Password?</a></p> <!-- Link untuk membuka modal lupa password -->
                 </div> 
+                
             </form>
         </div>
     </div>
-
+<!-- Modal Lupa Password -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1" role="dialog" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="forgotPasswordModalLabel">Lupa Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="forgot-password-form">
+                    <div class="mb-3">
+                        <input type="email" class="form-control" name="email" id="forgot-email" placeholder="Masukkan Email Anda" required>
+                    </div>
+                    <button type="submit" class="btn custom-btn w-100">Kirim Link Reset Password</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
     <script>
-        const scriptURL = "https://script.google.com/macros/s/AKfycbxXeYXg-vUN9cwnw6WHZFLiYVQFKvL7I2B3DibyzfXWzGzbCHQ7Lc5uVbm4S9flfHAc/exec"; // Ganti dengan Google Apps Script ID Anda
+        const scriptURL = "https://script.google.com/macros/s/AKfycbwhyEySvHpe5MSCrSMhT0Xe-rIlTphxbnDmpk5CDZ-ZvUf2eOybtcHkjwN9-QdpCW3w/exec"; // Ganti dengan Google Apps Script ID Anda
         const form = document.forms["login-form"];
 
         form.addEventListener("submit", async (e) => {
@@ -89,7 +130,7 @@
                 const result = await response.json();
 
         if (result.result === "success") {
-            localStorage.setItem("user", JSON.stringify(result.user));
+            sessionStorage.setItem("user", JSON.stringify(result.user));
             window.location.href = "dashboard.html";  // ✅ Redirect jika berhasil login
         } else {
             // ✅ Tampilkan pesan error jika akun belum diverifikasi
@@ -106,6 +147,38 @@
                 submitButton.innerText = "Login";
             }
         });
+
+// Fungsi untuk menangani permintaan reset password dari modal
+const forgotPasswordForm = document.getElementById("forgot-password-form");
+forgotPasswordForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const email = document.getElementById("forgot-email").value;
+    const submitButton = document.querySelector("#forgot-password-form button[type='submit']");
+        submitButton.disabled = true;  // Menonaktifkan tombol submit
+        submitButton.innerText = "Loading...";  // Mengubah teks tombol menjadi "Loading..."
+    try {
+        const response = await fetch(scriptURL, {
+            method: "POST",
+            body: new URLSearchParams({
+                action: "reset_password", // Aksi untuk reset password
+                email: email
+            })
+        });
+    const result = await response.json();
+        if (result.result === "success") {
+            Swal.fire("Sukses", "Link reset password telah dikirim ke email Anda. (Link kedaluwarsa dalam 60 menit)", "success");
+            $('#forgotPasswordModal').modal('hide'); // Menutup modal setelah sukses
+        } else {
+            Swal.fire("Error", result.message, "error");
+        }
+    } catch (error) {
+        Swal.fire("Error", "Terjadi kesalahan. Silakan coba lagi.", "error");
+    }finally {
+            submitButton.disabled = false;  // Mengaktifkan tombol kembali
+            submitButton.innerText = "Kirim Link Reset Password";  // Mengembalikan teks tombol
+        }
+});
+
         async function hashPassword(password) {
     const encoder = new TextEncoder();
     const data = encoder.encode(password);
@@ -113,6 +186,7 @@
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map(byte => byte.toString(16).padStart(2, "0")).join("");
 }
+
     </script>
 </body>
 </html>
